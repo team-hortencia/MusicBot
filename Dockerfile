@@ -1,17 +1,20 @@
-FROM ubuntu:17.04
+FROM alpine
 
-RUN mkdir -p /usr/src/musicbot
+MAINTAINER upaver20, https://upaver20.com
 
-WORKDIR /usr/src/musicbot
+VOLUME /MusicBot
 
-COPY . .
+RUN apk update \
+ && apk add ca-certificates ffmpeg x264 python3 python3-dev libffi-dev libsodium-dev gdbm-dev libc-dev zlib-dev sqlite-dev tk-dev\
+ && apk add --no-cache --virtual=.build-deps openssl-dev  git  alpine-sdk \
+ && git clone https://github.com/upaver20/MusicBot.git /MusicBot -b master \
+ && cd /MusicBot \
+ && git checkout own_build\
+ && python3 -m pip install --upgrade pip \
+ && python3 -m pip install --upgrade -r requirements.txt\
+ && apk del --purge .build-deps\
+ && rm -rf ~/.cache/pip
 
-RUN apt-get update && \
-    apt-get install python3 \
-    python3-pip \
-    libopus0 \
-    ffmpeg
+WORKDIR /MusicBot
 
-VOLUME /usr/src/musicbot/config
-
-CMD ["python3", "run.py"]
+CMD python3 run.py
