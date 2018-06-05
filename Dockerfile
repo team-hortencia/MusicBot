@@ -1,7 +1,5 @@
 FROM alpine
 
-MAINTAINER upaver20, https://upaver20.com
-
 VOLUME /MusicBot
 
 RUN apk update \
